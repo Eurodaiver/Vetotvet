@@ -49,7 +49,8 @@ namespace Vetotvet.Controllers
         // GET: Pets/Create
         public IActionResult Create()
         {
-            ViewBag.Kinds = _context.KindOfAnimals;
+            ViewBag.Kinds = new SelectList(_context.KindOfAnimals, nameof(KindOfAnimal.Id), nameof(KindOfAnimal.Kind));
+            ViewBag.Breeds = new SelectList(_context.Breeds, nameof(Breed.Id), nameof(Breed.Name));
             return View();
         }
 
@@ -58,7 +59,7 @@ namespace Vetotvet.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,DateOfBirth,Sex,Chip")] Pet pet)
+        public async Task<IActionResult> Create([Bind("Id,Name,DateOfBirth,KindOfAnimalId,BreedId,Sex,Chip")] Pet pet)
         {
             if (ModelState.IsValid)
             {
@@ -84,7 +85,7 @@ namespace Vetotvet.Controllers
             }
             //отправляем на форму данные для селекта о всех видах животных
             ViewBag.Kinds = new SelectList(_context.KindOfAnimals, nameof(KindOfAnimal.Id), nameof(KindOfAnimal.Kind));
-            ViewBag.Breed = new SelectList(_context.Breeds, nameof(Breed.Id), nameof(Breed.Name));
+            ViewBag.Breeds = new SelectList(_context.Breeds, nameof(Breed.Id), nameof(Breed.Name));
             return View(pet);
         }
 

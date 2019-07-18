@@ -86,7 +86,7 @@ namespace Vetotvet.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Surname,Phone,Address")] Client client)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Surname,Phone,Address")] Client client, int[] Pets)
         {
             if (id != client.Id)
             {
@@ -97,7 +97,23 @@ namespace Vetotvet.Controllers
             {
                 try
                 {
+
+                    //обновляем доп данные - по животным клиента
+                    client.Pets.Clear(); //может и не надо удалять??
+                    foreach(int PetId in Pets)
+                    {
+                        var pet = _context.Pets.FirstOrDefault<Pet>(x => x.Id == PetId);
+                        pet.Client = client;
+                        _context.Update(pet);
+                        client.Pets.Add(pet);
+                    }
+                    //обновляем основные данные по клиенту
                     _context.Update(client);
+
+
+                    //но походу надо обновлять у животных тк связь один ко многим покачто
+                    
+
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
