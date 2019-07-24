@@ -36,8 +36,18 @@
             </div>
             <div class="form-group">
                 <label asp-for="Pets" class="control-label"></label>
-                <select asp-for="Pets" class="form-control" asp-items="@ViewBag.Pets"></select>
-                <span asp-validation-for="Pets" class="text-danger"></span>
+
+                <div class="list-group">
+                    @foreach (var p in Model.Pets)
+                    {
+                        <a href="/Pets/Details/@p.Id" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            @p.Name
+                            <span class="badge badge-primary badge-pill">X</span>
+                        </a>
+                    }
+                </div>
+
+                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal">+</button>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
@@ -49,6 +59,36 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Выберите животное для добавления</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <label for="exampleSelect1">Кличка</label>
+                <select class="form-control" id="exampleSelect1">
+                    @foreach (var p in (List<Pet>)ViewBag.Pets)
+                    {
+                        <option>@p.Name</option>
+                    }
+
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Добавить</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

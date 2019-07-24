@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,12 +19,10 @@ namespace Vetotvet.Models
         public string Phone { get; set; }
         public string Email { get; set; }
         public string Address { get; set; }
+        [InverseProperty("Owner")]
         public ICollection<Pet> Pets { get; set; }
         public ICollection<Visit> Visits { get; set; }
-        public Client()
-        {
-            Pets = new List<Pet>();
-            Visits = new List<Visit>();
-        }
+
+ 
     }
 }

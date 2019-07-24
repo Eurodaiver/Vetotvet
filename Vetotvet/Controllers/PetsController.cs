@@ -24,7 +24,7 @@ namespace Vetotvet.Controllers
         {
             ViewBag.KindOfAnimals = _context.KindOfAnimals.ToList();
             ViewBag.Breeds = _context.Breeds.ToList();
-            return View(await _context.Pets.ToListAsync());
+            return View(await _context.Pets.Include(x=>x.Owner).ToListAsync());
         }
 
         // GET: Pets/Details/5
@@ -36,8 +36,7 @@ namespace Vetotvet.Controllers
             }
             ViewBag.KindOfAnimals = _context.KindOfAnimals.ToList();
             ViewBag.Breeds = _context.Breeds.ToList();
-            var pet = await _context.Pets
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var pet = await _context.Pets.Include(x => x.Owner).FirstOrDefaultAsync(m => m.Id == id);
             if (pet == null)
             {
                 return NotFound();
@@ -51,6 +50,7 @@ namespace Vetotvet.Controllers
         {
             ViewBag.Kinds = new SelectList(_context.KindOfAnimals, nameof(KindOfAnimal.Id), nameof(KindOfAnimal.Kind));
             ViewBag.Breeds = new SelectList(_context.Breeds, nameof(Breed.Id), nameof(Breed.Name));
+            ViewBag.Clients = new SelectList(_context.Clients, nameof(Client.Id), nameof(Client.Name));
             return View();
         }
 
@@ -59,7 +59,7 @@ namespace Vetotvet.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,DateOfBirth,KindOfAnimalId,BreedId,Sex,Chip")] Pet pet)
+        public async Task<IActionResult> Create([Bind("Id,Name,DateOfBirth,KindOfAnimalId,BreedId,Sex,Chip,OwnerId")] Pet pet)
         {
             if (ModelState.IsValid)
             {

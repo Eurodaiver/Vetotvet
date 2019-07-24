@@ -40,6 +40,12 @@
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Pets.Count)
+            (
+            @foreach (var item in Model.Pets)
+            {
+                <label>@item.Name - @item.KindOfAnimal </label>
+            }
+            )
         </dd>
     </dl>
 </div>

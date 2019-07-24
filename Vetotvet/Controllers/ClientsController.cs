@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -20,9 +21,10 @@ namespace Vetotvet.Controllers
         }
 
         // GET: Clients
+        //[Authorize]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Clients.ToListAsync());
+            return View(await _context.Clients.Include(x=>x.Pets).ToListAsync());
         }
 
         // GET: Clients/Details/5
@@ -33,8 +35,7 @@ namespace Vetotvet.Controllers
                 return NotFound();
             }
 
-            var client = await _context.Clients
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var client = await _context.Clients.Include(x=>x.Pets).FirstOrDefaultAsync(m => m.Id == id);
             if (client == null)
             {
                 return NotFound();
@@ -72,8 +73,9 @@ namespace Vetotvet.Controllers
             {
                 return NotFound();
             }
-            ViewBag.Pets = new MultiSelectList( _context.Pets, "Id", "Name");
-            var client = await _context.Clients.FindAsync(id);
+            
+            var client = await _context.Clients.Include(x => x.Pets).FirstOrDefaultAsync(m => m.Id == id);
+            ViewBag.Pets = _context.Pets.ToList();
             if (client == null)
             {
                 return NotFound();
@@ -97,22 +99,21 @@ namespace Vetotvet.Controllers
             {
                 try
                 {
-
                     //обновляем доп данные - по животным клиента
-                    client.Pets.Clear(); //может и не надо удалять??
-                    foreach(int PetId in Pets)
+                    //client.Pets.Clear(); //может и не надо удалять??
+                    foreach (int PetId in Pets)
                     {
                         var pet = _context.Pets.FirstOrDefault<Pet>(x => x.Id == PetId);
-                        pet.Client = client;
+                        pet.Owner = client;
                         _context.Update(pet);
-                        client.Pets.Add(pet);
+                        //client.Pets.Add(pet);
                     }
                     //обновляем основные данные по клиенту
                     _context.Update(client);
 
 
                     //но походу надо обновлять у животных тк связь один ко многим покачто
-                    
+
 
                     await _context.SaveChangesAsync();
                 }

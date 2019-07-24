@@ -51,7 +51,7 @@
                 @Html.DisplayFor(modelItem => item.Chip)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.KindOfAnimal.Kind)               
+                @Html.DisplayFor(modelItem => item.KindOfAnimal.Kind)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Breed.Name)
@@ -61,6 +61,7 @@
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
+
         </tr>
 }
     </tbody>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,7 +21,10 @@ namespace Vetotvet.Models
         public DateTime DateOfBirth { get; set; }
         public string Sex { get; set; }
         public string Chip { get; set; }
-        public int? ClientId { get; set; }
-        public virtual Client Client { get; set; }
+        [ForeignKey("Owner")]
+        public int? OwnerId { get; set; }
+        [DisplayName("Владелец")]
+        public Client Owner { get; set; }
+
     }
 }
