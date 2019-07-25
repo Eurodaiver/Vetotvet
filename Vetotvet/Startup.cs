@@ -13,14 +13,21 @@ using Microsoft.EntityFrameworkCore;
 using Vetotvet.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Net;
 
 namespace Vetotvet
 {
+ 
+
     public class Startup
     {
         public Startup(IConfiguration configuration)
         {
+ 
             Configuration = configuration;
+            //тест tls
+            //ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+
         }
 
         public IConfiguration Configuration { get; }
