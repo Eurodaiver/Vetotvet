@@ -75,7 +75,7 @@ namespace Vetotvet.Controllers
             }
             
             var client = await _context.Clients.Include(x => x.Pets).FirstOrDefaultAsync(m => m.Id == id);
-            ViewBag.Pets = _context.Pets.ToList();
+            //ViewBag.Pets = _context.Pets.ToList();
             if (client == null)
             {
                 return NotFound();

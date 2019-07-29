@@ -47,7 +47,7 @@
                     }
                 </div>
 
-                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal">+</button>
+                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#PetsModal">+</button>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
@@ -61,7 +61,7 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="PetsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -70,25 +70,42 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" id="modalbody">
                 <label for="exampleSelect1">Кличка</label>
-                <select class="form-control" id="exampleSelect1">
-                    @foreach (var p in (List<Pet>)ViewBag.Pets)
-                    {
-                        <option>@p.Name</option>
-                    }
-
+                <select id="exampleSelect1" class="form-control">
+                    <option v-for="pet in PetsList" v-bind:value="pet.Id">
+                        {{ pet.Name }}
+                    </option>
                 </select>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Добавить</button>
+                <button type="button" class="btn btn-primary" v-on:click="addPet()">Добавить</button>
             </div>
         </div>
     </div>
 </div>
 <!-- Modal -->
 
+<script>
+
+    var PetsModal = new Vue({
+        el: '#PetsModal',
+        data: {
+            PetsList: []
+        },
+        created: function () {
+            //выкачиваем список животных
+            axios.get('/api/Pets/GetPets').then(response => (this.PetsList = response.data));          
+        },
+        methods: {
+            addPet() {
+                //добавляем животное через апи
+                axios.post('/api/Clients/AddPetToClient', {PetId:5 }) //не передаетсяв параметры ?????? почему-то
+            }
+        }
+    })
+</script>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

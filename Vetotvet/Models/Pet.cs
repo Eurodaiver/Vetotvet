@@ -22,9 +22,9 @@ namespace Vetotvet.Models
         public string Sex { get; set; }
         public string Chip { get; set; }
         [ForeignKey("Owner")]
-        public int? OwnerId { get; set; }
+        public virtual int? OwnerId { get; set; }
         [DisplayName("Владелец")]
-        public Client Owner { get; set; }
+        public virtual Client Owner { get; set; }
 
     }
 }

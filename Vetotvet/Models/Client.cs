@@ -19,7 +19,6 @@ namespace Vetotvet.Models
         public string Phone { get; set; }
         public string Email { get; set; }
         public string Address { get; set; }
-        [InverseProperty("Owner")]
         public ICollection<Pet> Pets { get; set; }
         public ICollection<Visit> Visits { get; set; }
 

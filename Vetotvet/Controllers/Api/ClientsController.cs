@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Vetotvet.Data;
 using Vetotvet.Models;
+using Newtonsoft.Json;
 
 namespace Vetotvet.Controllers.Api
 {
@@ -26,6 +27,7 @@ namespace Vetotvet.Controllers.Api
         public async Task<IEnumerable<Client>> GetClients()
         {
             List<Client> res = await _context.Clients.Include(x => x.Pets).ThenInclude(y=>y.Owner).ToListAsync();
+
             return res;
         }
 
@@ -102,6 +104,16 @@ namespace Vetotvet.Controllers.Api
         private bool ClientExists(int id)
         {
             return _context.Clients.Any(e => e.Id == id);
+        }
+
+        // POST: api/Clients/AddPetToClient
+        [HttpPost]
+        public async Task<ActionResult<int>> AddPetToClient(int PetId, int ClientId)
+        {
+            //находим юзера и добавляем ему питомца
+            var client = await _context.Clients.FindAsync(ClientId);
+            client.Pets.Add(await _context.Pets.FindAsync(PetId));
+            return await _context.SaveChangesAsync();
         }
     }
 }
