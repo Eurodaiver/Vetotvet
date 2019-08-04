@@ -88,7 +88,7 @@ namespace Vetotvet.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Surname,Phone,Address")] Client client, int[] Pets)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Surname,Phone,Address")] Client client, int[] PetsSelect)
         {
             if (id != client.Id)
             {
@@ -101,7 +101,7 @@ namespace Vetotvet.Controllers
                 {
                     //обновляем доп данные - по животным клиента
                     //client.Pets.Clear(); //может и не надо удалять??
-                    foreach (int PetId in Pets)
+                    foreach (int PetId in PetsSelect)
                     {
                         var pet = _context.Pets.FirstOrDefault<Pet>(x => x.Id == PetId);
                         pet.Owner = client;

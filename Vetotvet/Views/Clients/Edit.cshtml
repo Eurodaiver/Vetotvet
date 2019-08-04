@@ -37,15 +37,34 @@
             <div class="form-group">
                 <label asp-for="Pets" class="control-label"></label>
 
-                <div class="list-group">
-                    @foreach (var p in Model.Pets)
-                    {
+                <div id="pets">
+                    <multiselect v-model="value"
+                                 :options="options"
+                                 :multiple="true"
+                                 :custom-label="customLabel"
+                                 :close-on-select="true"
+                                 :clear-on-select="false"
+                                 :hide-selected="true"
+                                 :preserve-search="true"
+                                 placeholder="Выберите животное"
+                                 label="Name"
+                                 track-by="Id"
+                                 id="example"
+                                 @@select="onSelect">
+                    </multiselect>
+                    <pre class="language-json"><code>{{ value  }}</code></pre>
+                </div>
+
+
+                @*<div class="list-group">
+                        @foreach (var p in Model.Pets)
+                        {
                         <a href="/Pets/Details/@p.Id" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                             @p.Name
                             <span class="badge badge-primary badge-pill">X</span>
                         </a>
-                    }
-                </div>
+                        }
+                    </div>*@
 
                 <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#PetsModal">+</button>
             </div>
@@ -71,12 +90,45 @@
                 </button>
             </div>
             <div class="modal-body" id="modalbody">
-                <label for="exampleSelect1">Кличка</label>
-                <select id="exampleSelect1" class="form-control">
-                    <option v-for="pet in PetsList" v-bind:value="pet.Id">
-                        {{ pet.Name }}
-                    </option>
-                </select>
+                <div class="row">
+                    <div class="col-md-4">
+                        <form asp-action="CreatePet">
+                            
+                            <div class="form-group">
+                                <label  class="control-label">Кличка</label>
+                                <input  class="form-control" />
+                               
+                            </div>
+                            <div class="form-group">
+                                <label  class="control-label"></label>
+                                <input  class="form-control" />
+                                
+                            </div>
+                            <div class="form-group">
+                                <label  class="control-label"></label>
+                                <input  class="form-control" />
+                                
+                            </div>
+                            <div class="form-group">
+                                <label  class="control-label"></label>
+                                <input  class="form-control" />
+                                
+                            </div>
+                            <div class="form-group">
+                                <label  class="control-label"></label>
+                                <select class="form-control" ></select>
+                                
+                            </div>
+                            <div class="form-group">
+                                <label  class="control-label"></label>
+                                <select class="form-control" ></select>
+                               
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -86,25 +138,64 @@
     </div>
 </div>
 <!-- Modal -->
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script src="https://unpkg.com/vue-multiselect@2.1.2/dist/vue-multiselect.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.2/dist/vue-multiselect.min.css">
+
 
 <script>
-
-    var PetsModal = new Vue({
-        el: '#PetsModal',
-        data: {
-            PetsList: []
+    new Vue({
+	components: {
+  	Multiselect: window.VueMultiselect.default
+	},
+	data: {
+  	value: [],
+  	options: []
         },
-        created: function () {
+            mounted: function () {
+            //выкачиваем список животных у выбранного клиента
+            axios.get('/api/Pets/GetPetsByOwner/@Model.Id').then(response => (this.value = response.data));
+            console.log("питомцы владельца - " + this.value);
             //выкачиваем список животных
-            axios.get('/api/Pets/GetPets').then(response => (this.PetsList = response.data));          
+            axios.get('/api/Pets/GetPets').then(response => (this.options = response.data));
+            console.log("мой вывод - " + this.options);
         },
         methods: {
-            addPet() {
-                //добавляем животное через апи
-                axios.post('/api/Clients/AddPetToClient', {PetId:5 }) //не передаетсяв параметры ?????? почему-то
-            }
+          customLabel(option) {
+                return `${option.Name} - ${option.Breed.Name}`
+          },
+          onSelect(option, id) {
+    	    console.log(option, id)
+          },
+        updateSelectedStyle (style) {
+          this.selectedStyle = style
         }
-    })
+  }
+}).$mount('#pets')
+
+
+</script>
+
+
+
+<script>
+        var PetsModal = new Vue({
+                el: '#PetsModal',
+                data: {
+                    PetsList: []
+                },
+                created: function () {
+                    //выкачиваем список животных
+                    axios.get('/api/Pets/GetPets').then(response => (this.PetsList = response.data));
+                    console.log(this.PetsList);
+                },
+                methods: {
+                    addPet() {
+                        //добавляем животное через апи
+                        axios.post('/api/Clients/AddPetToClient', { PetId: 5 }) //не передаетсяв параметры ?????? почему-то
+                    }
+                }
+            })
 </script>
 
 @section Scripts {

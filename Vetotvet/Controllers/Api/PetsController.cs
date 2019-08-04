@@ -25,7 +25,7 @@ namespace Vetotvet.Controllers.Api
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Pet>>> GetPets()
         {
-            return await _context.Pets.ToListAsync();
+            return await _context.Pets.Include(x=>x.Breed).ToListAsync();
         }
 
         // GET: api/Pets/5
@@ -37,6 +37,21 @@ namespace Vetotvet.Controllers.Api
             if (pet == null)
             {
                 return NotFound();
+            }
+
+            return pet;
+        }
+
+        //получаем список животных по указанному id владельца
+        // GET: api/Pets/GetPetsByOwner/1
+        [HttpGet("{ownerid}")]
+        public async Task<ActionResult<IEnumerable<Pet>>> GetPetsByOwner(int ownerid)
+        {
+            var pet = await _context.Pets.Include(x => x.Breed).ThenInclude(x=>x.KindOfAnimal).Where(x=>x.OwnerId == ownerid).ToListAsync();
+
+            if (pet == null)
+            {
+                return null;
             }
 
             return pet;
