@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -88,8 +89,13 @@ namespace Vetotvet.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Surname,Phone,Address")] Client client, int[] PetsSelect)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Surname,Phone,Address")] Client client, IEnumerable<object> PetsSelect, IEnumerable<object> test)
         {
+            var xx = Request.Form;
+            var y = Request.Body;
+            //выяснить почему не приходят данные из multiselect
+            string sr = new StreamReader(y).ReadToEnd();
+
             if (id != client.Id)
             {
                 return NotFound();

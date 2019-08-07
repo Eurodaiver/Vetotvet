@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Vetotvet.Data;
 using Vetotvet.Models;
 using Newtonsoft.Json;
+using System.IO;
 
 namespace Vetotvet.Controllers.Api
 {
@@ -106,14 +107,29 @@ namespace Vetotvet.Controllers.Api
             return _context.Clients.Any(e => e.Id == id);
         }
 
-        // POST: api/Clients/AddPetToClient
-        [HttpPost]
+        // GET: api/Clients/AddPetToClient?...&
+        [HttpGet]
         public async Task<ActionResult<int>> AddPetToClient(int PetId, int ClientId)
         {
             //находим юзера и добавляем ему питомца
-            var client = await _context.Clients.FindAsync(ClientId);
+            var client = await _context.Clients.Include(x => x.Pets).FirstOrDefaultAsync(x => x.Id == ClientId);
             client.Pets.Add(await _context.Pets.FindAsync(PetId));
             return await _context.SaveChangesAsync();
         }
+
+        // GET: api/Clients/DeletePetFromClient?...&
+        [HttpGet]
+        public async Task<ActionResult<int>> DeletePetFromClient(int PetId, int ClientId)
+        {
+            //находим юзера и удаляем у него питомца
+            var client = await _context.Clients.Include(x => x.Pets).FirstOrDefaultAsync(x => x.Id == ClientId);
+            client.Pets.Remove(await _context.Pets.FindAsync(PetId));
+
+
+            return await _context.SaveChangesAsync();
+        }
+
+
+
     }
 }
